@@ -12,16 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.nyp.scaffoldingapp.ui.pages.*
 import com.nyp.scaffoldingapp.ui.theme.ScaffoldingTheme
+import androidx.activity.compose.BackHandler
 
 /**
  * The four bottom tabs. An enum keeps the list in one place — add a tab here
  * and the navigation bar updates itself.
  */
 enum class Tab(val label: String, @DrawableRes val icon: Int) {
-    PAGE1("Page 1", R.drawable.ic_home),
-    PAGE2("Page 2", R.drawable.ic_email),
-    PAGE3("Page 3", R.drawable.ic_list),
-    PAGE4("Page 4", R.drawable.ic_star)
+    PAGE1("Table", R.drawable.ic_list),
+    PAGE2("Stats", R.drawable.ic_stats),
+    PAGE3("Fixtures", R.drawable.ic_fixtures),
+    PAGE4("Highlights", R.drawable.ic_star)
 }
 
 class MainActivity : ComponentActivity() {
@@ -39,6 +40,10 @@ class MainActivity : ComponentActivity() {
 fun AppScaffold() {
     // rememberSaveable, not remember: the selected tab must survive a rotation.
     var selectedTab by rememberSaveable { mutableStateOf(Tab.PAGE1) }
+
+    BackHandler(enabled = selectedTab != Tab.PAGE1) {
+        selectedTab = Tab.PAGE1
+    }
 
     Scaffold(
         bottomBar = {
