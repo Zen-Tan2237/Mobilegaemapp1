@@ -95,9 +95,9 @@ fun AppScaffold(darkMode: Boolean, onToggleTheme: () -> Unit) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column {
-                        Text("MATCHDAY", style = MaterialTheme.typography.titleLarge,
+                        Text("Generic Football App", style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.ExtraBold, letterSpacing = 1.6.sp)
-                        Text("Your football companion", style = MaterialTheme.typography.bodySmall,
+                        Text("This is some football app", style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     IconButton(onClick = onToggleTheme, modifier = Modifier.glassSurface(50).size(48.dp)) {
