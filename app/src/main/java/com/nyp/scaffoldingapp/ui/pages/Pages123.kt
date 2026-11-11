@@ -27,8 +27,6 @@ import java.net.URL
 @Composable
 fun Page2(modifier: Modifier = Modifier) = Placeholder("Page 2", modifier)
 
-@Composable
-fun Page3(modifier: Modifier = Modifier) = Placeholder("Page 3", modifier)
 
 @Composable
 private fun Placeholder(label: String, modifier: Modifier = Modifier) {
