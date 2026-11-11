@@ -88,24 +88,6 @@ fun AppScaffold(darkMode: Boolean, onToggleTheme: () -> Unit) {
     GlassBackground {
         Scaffold(
             containerColor = Color.Transparent,
-            topBar = {
-                Row(
-                    Modifier.fillMaxWidth().padding(start = 20.dp, end = 16.dp, top = 12.dp, bottom = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column {
-                        Text("Generic Football App", style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.ExtraBold, letterSpacing = 1.6.sp)
-                        Text("This is some football app", style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                    IconButton(onClick = onToggleTheme, modifier = Modifier.glassSurface(50).size(48.dp)) {
-                        Icon(if (darkMode) Icons.Outlined.LightMode else Icons.Outlined.DarkMode,
-                            contentDescription = if (darkMode) "Switch to light theme" else "Switch to dark theme")
-                    }
-                }
-            },
             bottomBar = {
                 Row(
                     Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)
