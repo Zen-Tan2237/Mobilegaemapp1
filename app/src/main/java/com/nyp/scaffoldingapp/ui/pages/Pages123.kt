@@ -25,10 +25,6 @@ import java.net.URL
  */
 
 @Composable
-fun Page2(modifier: Modifier = Modifier) = Placeholder("Page 2", modifier)
-
-
-@Composable
 private fun Placeholder(label: String, modifier: Modifier = Modifier) {
     Column(
         modifier.fillMaxSize().padding(24.dp),
