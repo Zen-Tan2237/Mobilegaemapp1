@@ -6,79 +6,33 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.net.URL
-
-data class PlayerStat(
-    val name: String,
-    val club: String,
-    val value: Int
-)
-
-// Read a list of players from the JSON response
-fun readPlayers(json: JSONObject, category: String): List<PlayerStat> {
-    val array = json.getJSONArray(category)
-    val players = mutableListOf<PlayerStat>()
-
-    for (i in 0 until array.length()) {
-        val player = array.getJSONObject(i)
-
-        players.add(
-            PlayerStat(
-                player.getString("name"),
-                player.getString("club"),
-                player.getInt("value")
-            )
-        )
-    }
-
-    return players.sortedByDescending { it.value }.take(20)
-}
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun Page2(modifier: Modifier = Modifier) {
+fun Page2(
+    modifier: Modifier = Modifier,
+    vm: StatsViewModel = viewModel()
+) {
 
     val tabs = listOf("Goals", "Assists", "Yellow Cards", "Red Cards")
     val keys = listOf("goals", "assists", "yellowCards", "redCards")
 
-    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
-    var stats by remember {
-        mutableStateOf<Map<String, List<PlayerStat>>>(emptyMap())
-    }
-    var loading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf("") }
+    // Read data and selected category from the ViewModel
+    val state by vm.state.collectAsState()
+    val selectedTab = vm.selectedTab
 
-    // Fetch player stats from the API
-    LaunchedEffect(Unit) {
-        try {
-            val data = withContext(Dispatchers.IO) {
-                URL("https://s4zj4o.mockapi.dog").readText()
-            }
+    // Handle leaving and returning to the page
+    DisposableEffect(vm) {
+        vm.resumeIfNeeded()
 
-            val json = JSONObject(data)
-
-            stats = mapOf(
-                "goals" to readPlayers(json, "goals"),
-                "assists" to readPlayers(json, "assists"),
-                "yellowCards" to readPlayers(json, "yellowCards"),
-                "redCards" to readPlayers(json, "redCards")
-            )
-
-        } catch (e: Exception) {
-            error = "Failed to load player stats"
+        onDispose {
+            vm.stopLoading()
         }
-
-        loading = false
     }
-
-    val players = stats[keys[selectedTab]].orEmpty()
 
     Column(
         modifier = modifier
@@ -94,7 +48,7 @@ fun Page2(modifier: Modifier = Modifier) {
             tabs.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTab == index,
-                    onClick = { selectedTab = index },
+                    onClick = { vm.selectTab(index) },
                     text = { Text(title) }
                 )
             }
@@ -113,18 +67,43 @@ fun Page2(modifier: Modifier = Modifier) {
 
         HorizontalDivider()
 
-        // Display the player list
-        if (loading) {
-            CircularProgressIndicator()
-        } else if (error.isNotEmpty()) {
-            Text(error)
-        } else if (players.isEmpty()) {
-            Text("No players found")
-        } else {
-            LazyColumn {
-                items(players) { player ->
-                    PlayerStatRow(player)
-                    HorizontalDivider()
+        // Display the current API state
+        when (val current = state) {
+
+            StatsUiState.Loading -> {
+                CircularProgressIndicator()
+            }
+
+            is StatsUiState.Failed -> {
+                Text(current.message)
+
+                Spacer(Modifier.height(12.dp))
+
+                Button(onClick = { vm.load() }) {
+                    Text("Retry")
+                }
+            }
+
+            is StatsUiState.Ready -> {
+
+                val players = current.stats[keys[selectedTab]].orEmpty()
+
+                if (players.isEmpty()) {
+                    Text("No players found")
+
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(
+                            items = players,
+                            key = { "${it.name}-${it.club}" }
+                        ) { player ->
+
+                            PlayerStatRow(player)
+                            HorizontalDivider()
+                        }
+                    }
                 }
             }
         }
@@ -133,10 +112,13 @@ fun Page2(modifier: Modifier = Modifier) {
 
 // Display one player's name, club and statistic
 @Composable
-fun PlayerStatRow(player: PlayerStat) {
+fun PlayerStatRow(
+    player: PlayerStat,
+    modifier: Modifier = Modifier
+) {
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
