@@ -11,14 +11,15 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.mutableStateOf
 
 // The possible states of the statistics page
 sealed interface StatsUiState {
     object Loading : StatsUiState
 
-    data class Ready(
-        val stats: Map<String, List<PlayerStat>>
-    ) : StatsUiState
+
+    data class Ready(val stats: Map<String, Map<String, List<PlayerStat>>>) : StatsUiState
+
 
     data class Failed(val message: String) : StatsUiState
 }
@@ -34,6 +35,16 @@ class StatsViewModel : ViewModel() {
     // Remember which statistics category is selected
     var selectedTab by mutableIntStateOf(0)
         private set
+
+    // Remember the selected league
+    var selectedLeague by mutableStateOf("premierLeague")
+        private set
+
+    // Change leagues and return to Goals
+    fun selectLeague(league: String) {
+        selectedLeague = league
+        selectedTab = 0
+    }
 
     private var request: Job? = null
 

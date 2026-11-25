@@ -15,11 +15,12 @@ data class PlayerStat(
 
 object StatsApi {
 
-    private const val ENDPOINT = "https://s4zj4o.mockapi.dog"
+    private const val ENDPOINT = "https://9pjm1e.mockapi.dog"
     private const val TIMEOUT_MS = 10_000
 
     // Fetch player statistics from MockAPI Dog
-    suspend fun fetchStats(): Map<String, List<PlayerStat>> =
+
+    suspend fun fetchStats(): Map<String, Map<String, List<PlayerStat>>> =
         withContext(Dispatchers.IO) {
 
             val connection = URL(ENDPOINT)
@@ -36,14 +37,35 @@ object StatsApi {
 
                 val json = JSONObject(data)
 
-                mapOf(
-                    "goals" to readPlayers(json, "goals"),
-                    "assists" to readPlayers(json, "assists"),
-                    "yellowCards" to readPlayers(json, "yellowCards"),
-                    "redCards" to readPlayers(json, "redCards")
+                // Read statistics for all five leagues
+                val leagueKeys = listOf(
+                    "premierLeague",
+                    "laLiga",
+                    "serieA",
+                    "bundesliga",
+                    "ligue1"
                 )
 
-            } finally {
+                val allLeagues = mutableMapOf<String, Map<String, List<PlayerStat>>>()
+
+                for (league in leagueKeys) {
+
+                    val leagueJson = json.getJSONObject(league)
+
+                    allLeagues[league] = mapOf(
+                        "goals" to readPlayers(leagueJson, "goals"),
+                        "assists" to readPlayers(leagueJson, "assists"),
+                        "yellowCards" to readPlayers(leagueJson, "yellowCards"),
+                        "redCards" to readPlayers(leagueJson, "redCards")
+                    )
+
+                }
+
+                allLeagues
+
+
+            }
+            finally {
                 connection.disconnect()
             }
         }

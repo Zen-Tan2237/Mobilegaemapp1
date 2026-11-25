@@ -21,6 +21,26 @@ fun Page2(
     val tabs = listOf("Goals", "Assists", "Yellow Cards", "Red Cards")
     val keys = listOf("goals", "assists", "yellowCards", "redCards")
 
+
+    // Names shown on the league tabs
+    val leagueNames = listOf(
+        "Premier League",
+        "La Liga",
+        "Serie A",
+        "Bundesliga",
+        "Ligue 1"
+    )
+
+    // Keys used by the API
+    val leagueKeys = listOf(
+        "premierLeague",
+        "laLiga",
+        "serieA",
+        "bundesliga",
+        "ligue1"
+    )
+
+
     // Read data and selected category from the ViewModel
     val state by vm.state.collectAsState()
     val selectedTab = vm.selectedTab
@@ -39,6 +59,27 @@ fun Page2(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+
+        // Tabs for switching between leagues
+        ScrollableTabRow(
+            selectedTabIndex = leagueKeys.indexOf(vm.selectedLeague),
+            edgePadding = 0.dp
+        ) {
+
+            leagueNames.forEachIndexed { index, name ->
+
+                Tab(
+                    selected = vm.selectedLeague == leagueKeys[index],
+                    onClick = { vm.selectLeague(leagueKeys[index]) },
+                    text = { Text(name) }
+                )
+
+            }
+
+        }
+
+        Spacer(Modifier.height(12.dp))
+
 
         // Tabs for switching between statistics
         ScrollableTabRow(
@@ -86,7 +127,9 @@ fun Page2(
 
             is StatsUiState.Ready -> {
 
-                val players = current.stats[keys[selectedTab]].orEmpty()
+                // Get players from the chosen league and category
+                val players = current.stats[vm.selectedLeague] ?.get(keys[selectedTab])
+                    .orEmpty()
 
                 if (players.isEmpty()) {
                     Text("No players found")

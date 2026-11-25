@@ -7,15 +7,47 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+
 
 // The possible states of the standings page
 sealed interface StandingsUiState {
     object Loading : StandingsUiState
-    data class Ready(val teams: List<Team>) : StandingsUiState
+    data class Ready(val leagues: Map<String, List<Team>>) : StandingsUiState
     data class Failed(val message: String) : StandingsUiState
 }
 
 class StandingsViewModel : ViewModel() {
+
+    // Store the selected league
+
+    // Store the selected league and club
+    var selectedLeague by mutableStateOf("premierLeague")
+        private set
+
+    var selectedClub by mutableStateOf<String?>(null)
+        private set
+
+    // Change the league manually
+    fun selectLeague(league: String) {
+        selectedLeague = league
+        selectedClub = null
+        searchQuery = ""
+    }
+
+    // Open a club from the search results
+    fun openClub(league: String, club: String) {
+        selectedLeague = league
+        selectedClub = club
+        searchQuery = ""
+    }
+
+    // Show the full league table again
+    fun showAllClubs() {
+        selectedClub = null
+    }
 
     private val _state = MutableStateFlow<StandingsUiState>(
         StandingsUiState.Loading
@@ -37,8 +69,8 @@ class StandingsViewModel : ViewModel() {
             _state.value = StandingsUiState.Loading
 
             try {
-                val teams = StandingsApi.fetchTeams()
-                _state.value = StandingsUiState.Ready(teams)
+                val leagues = StandingsApi.fetchLeagues()
+                _state.value = StandingsUiState.Ready(leagues)
 
             } catch (e: CancellationException) {
                 throw e
@@ -65,4 +97,13 @@ class StandingsViewModel : ViewModel() {
             request?.cancel()
         }
     }
+    // Store the user's search input
+    var searchQuery by mutableStateOf("")
+        private set
+
+    // Update the search input
+    fun updateSearchQuery(text: String) {
+        searchQuery = text
+    }
+
 }

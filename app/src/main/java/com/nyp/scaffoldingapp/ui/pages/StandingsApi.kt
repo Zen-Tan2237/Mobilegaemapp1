@@ -2,7 +2,7 @@ package com.nyp.scaffoldingapp.ui.pages
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.json.JSONArray
+import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -20,46 +20,53 @@ data class Team(
 }
 
 object StandingsApi {
-    private const val ENDPOINT = "https://ojaf0y.mockapi.dog"
+    private const val ENDPOINT = "https://dt2z7j.mockapi.dog"
     private const val TIMEOUT_MS = 10_000
 
     // Fetch standings from MockAPI Dog
-    suspend fun fetchTeams(): List<Team> = withContext(Dispatchers.IO) {
+
+    suspend fun fetchLeagues(): Map<String, List<Team>> = withContext(Dispatchers.IO) {
 
         val connection = URL(ENDPOINT).openConnection() as HttpURLConnection
-
         connection.requestMethod = "GET"
         connection.connectTimeout = TIMEOUT_MS
         connection.readTimeout = TIMEOUT_MS
 
         try {
-            val json = connection.inputStream
-                .bufferedReader()
-                .use { it.readText() }
+            val data = connection.inputStream.bufferedReader().use { it.readText() }
+            val json = JSONObject(data)
 
-            val array = JSONArray(json)
-            val teams = mutableListOf<Team>()
+            val leagues = mutableMapOf<String, List<Team>>()
+            val keys = listOf("premierLeague", "laLiga", "serieA", "bundesliga", "ligue1")
 
-            // Convert each JSON entry into a Team
-            for (i in 0 until array.length()) {
-                val obj = array.getJSONObject(i)
+            for (key in keys) {
+                val array = json.getJSONArray(key)
+                val teams = mutableListOf<Team>()
 
-                teams.add(
-                    Team(
-                        name = obj.getString("name"),
-                        wins = obj.getInt("wins"),
-                        draws = obj.getInt("draws"),
-                        losses = obj.getInt("losses"),
-                        goalsFor = obj.getInt("goalsFor"),
-                        goalsAgainst = obj.getInt("goalsAgainst")
+                for (i in 0 until array.length()) {
+                    val obj = array.getJSONObject(i)
+
+                    teams.add(
+                        Team(
+                            name = obj.getString("name"),
+                            wins = obj.getInt("wins"),
+                            draws = obj.getInt("draws"),
+                            losses = obj.getInt("losses"),
+                            goalsFor = obj.getInt("goalsFor"),
+                            goalsAgainst = obj.getInt("goalsAgainst")
+                        )
                     )
-                )
+                }
+
+                leagues[key] = teams
             }
 
-            teams
+            leagues
 
-        } finally {
+        } finally
+        {
             connection.disconnect()
         }
     }
 }
+
