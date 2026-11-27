@@ -3,19 +3,16 @@ package com.nyp.scaffoldingapp.ui.pages
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MonotonicFrameClock
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.Font
 import com.nyp.scaffoldingapp.ui.theme.glassSurface
 import com.nyp.scaffoldingapp.utils.ExternalURLHelper
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,6 +32,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.text.style.TextAlign
+import com.nyp.scaffoldingapp.utils.shortTeamName
+import com.nyp.scaffoldingapp.utils.rollChance
 
 
 @Composable
@@ -232,13 +231,12 @@ fun MatchHighlightsCard(match : MatchHighlights){
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)
             {
                 Text(
-                    text = match.homeTeam,
+                    text = shortTeamName(match.homeTeam),
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.End,
                     style = MaterialTheme.typography.bodyLarge
 
                 )
-
                 Text(
                     text = "${match.homeScore} - ${match.awayScore}",
                     style = MaterialTheme.typography.titleMedium,
@@ -247,7 +245,7 @@ fun MatchHighlightsCard(match : MatchHighlights){
                     softWrap = false
                 )
                 Text(
-                    text = match.awayTeam,
+                    text = shortTeamName(match.awayTeam),
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.bodyLarge
@@ -270,9 +268,16 @@ fun WatchHighlightsButton(highlightUrl: String) {
 
     Button(
         onClick = {
+            // I think I very funny so I can rick roll u
+            val url = if (rollChance(5)){
+                "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            }
+            else{
+                highlightUrl
+            }
             ExternalURLHelper.openURL(
                 context = context,
-                url = highlightUrl
+                url = url
             )
         },
         enabled = highlightUrl.isNotBlank()

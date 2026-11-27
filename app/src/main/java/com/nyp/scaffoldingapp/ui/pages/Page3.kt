@@ -1,7 +1,5 @@
 package com.nyp.scaffoldingapp.ui.pages
 
-import android.R
-import android.service.autofill.FieldClassification
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,10 +12,8 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,6 +39,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment
+import com.nyp.scaffoldingapp.utils.shortTeamName
 
 /** Page 3: upcoming football fixtures. Data is deliberately labelled DEMO. */
 @Composable
@@ -261,7 +258,7 @@ private fun MatchFixtureCard(match: FootballMatch) {
             }
             Spacer(Modifier.height(5.dp))
             // Man Utd is shit
-            Text(match.homeTeam,
+            Text(shortTeamName(match.homeTeam),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
@@ -275,7 +272,7 @@ private fun MatchFixtureCard(match: FootballMatch) {
                 color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(Modifier.height(5.dp))
-            Text(match.awayTeam,
+            Text(shortTeamName(match.awayTeam),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
