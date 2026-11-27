@@ -56,10 +56,10 @@ import com.nyp.scaffoldingapp.ui.theme.glassSurface
 
 /** Preserved four-tab navigation from the original MainActivity. */
 enum class Tab(val label: String, @DrawableRes val icon: Int) {
-    PAGE1("Page 1", R.drawable.ic_home),
-    PAGE2("Page 2", R.drawable.ic_email),
-    PAGE3("Page 3", R.drawable.ic_list),
-    PAGE4("Page 4", R.drawable.ic_star)
+    PAGE1("Table", R.drawable.ic_list),
+    PAGE2("Stats", R.drawable.ic_stats),
+    PAGE3("Fixtures", R.drawable.ic_fixtures),
+    PAGE4("Highlights", R.drawable.ic_star)
 
 }
 
