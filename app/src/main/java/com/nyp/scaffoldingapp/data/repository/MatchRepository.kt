@@ -2,15 +2,17 @@ package com.nyp.scaffoldingapp.data.repository
 
 import com.nyp.scaffoldingapp.data.model.FootballMatch
 import java.util.Calendar
+import com.nyp.scaffoldingapp.utils.ApiHelper
+import org.json.JSONArray
 
 /** Swap this implementation for an HTTP-backed repository when the API is ready. */
 interface MatchRepository {
-    fun getUpcomingMatches(): List<FootballMatch>
+    suspend fun getUpcomingMatches(): List<FootballMatch>
 }
 
 /** Fictional fixtures for demonstration; these are NOT actual football schedules. */
 class DemoMatchRepository : MatchRepository {
-    override fun getUpcomingMatches(): List<FootballMatch> = listOf(
+    override suspend fun getUpcomingMatches(): List<FootballMatch> = listOf(
         fixture("1", "Premier League", "Arsenal", "Chelsea", 0, 20, 0, "Emirates Stadium"),
         fixture("2", "La Liga", "Barcelona", "Valencia", 1, 19, 30, "Home stadium"),
         fixture("3", "Premier League", "Liverpool", "Newcastle", 1, 21, 0, "Anfield"),
@@ -32,5 +34,41 @@ class DemoMatchRepository : MatchRepository {
             add(Calendar.DAY_OF_YEAR, daysFromToday)
         }
         return FootballMatch(id, league, home, away, calendar.timeInMillis, venue)
+    }
+}
+
+class ApiMatchRepository : MatchRepository {
+
+    companion object {
+        private const val ENDPOINT = "https://pu31cc.mockapi.dog/Fixtures"
+    }
+
+    override suspend fun getUpcomingMatches(): List<FootballMatch> {
+
+        val array = ApiHelper.getArray(ENDPOINT)
+        val matches = mutableListOf<FootballMatch>()
+
+        for (i in 0 until array.length()) {
+            val obj = array.getJSONObject(i)
+
+            val kickOffMillis = ApiHelper.relativeDate(
+                obj.getInt("daysFromToday"),
+                obj.getInt("hour"),
+                obj.getInt("minute")
+            )
+
+            matches.add(
+                FootballMatch(
+                    id = obj.getString("id"),
+                    league = obj.getString("league"),
+                    homeTeam = obj.getString("homeTeam"),
+                    awayTeam = obj.getString("awayTeam"),
+                    kickOffMillis = kickOffMillis,
+                    venue = obj.getString("venue")
+                )
+            )
+        }
+
+        return matches.sortedBy { it.kickOffMillis }
     }
 }
