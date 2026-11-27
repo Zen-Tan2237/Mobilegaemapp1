@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.nyp.scaffoldingapp.ui.theme.glassSurface
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun Page1(
@@ -74,7 +76,12 @@ fun Page1(
     ) {
 
         // Page title
-        Text("Football League Tables", fontSize = 24.sp)
+        Text(
+            text = "Football League Tables",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
         Spacer(Modifier.height(12.dp))
 
@@ -158,7 +165,8 @@ fun Page1(
 
                 Text(
                     text = "Showing: ${vm.selectedClub}",
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 TextButton(onClick = { vm.showAllClubs() }) {
@@ -232,9 +240,15 @@ fun Page1(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
+                            .glassSurface(cornerRadius = 24)
                             .horizontalScroll(rememberScrollState())
                             .verticalScroll(rememberScrollState())
-                    ) {
+                            .padding(12.dp)
+                    )
+                    {
+                        CompositionLocalProvider(
+                            LocalContentColor provides MaterialTheme.colorScheme.onSurface
+                        ) {
 
                         // Table header
                         Row {
@@ -277,6 +291,7 @@ fun Page1(
                             HorizontalDivider()
 
                         }
+                            }
 
                     }
 

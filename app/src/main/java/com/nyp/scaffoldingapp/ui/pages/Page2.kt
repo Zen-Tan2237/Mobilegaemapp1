@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.nyp.scaffoldingapp.ui.theme.glassSurface
+
 
 @Composable
 fun Page2(
@@ -136,7 +138,9 @@ fun Page2(
 
                 } else {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        contentPadding = PaddingValues(vertical = 8.dp)
                     ) {
                         items(
                             items = players,
@@ -144,7 +148,6 @@ fun Page2(
                         ) { player ->
 
                             PlayerStatRow(player)
-                            HorizontalDivider()
                         }
                     }
                 }
@@ -163,24 +166,28 @@ fun PlayerStatRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(12.dp),
+            .glassSurface(cornerRadius = 24)
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 player.name,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Medium
             )
 
             Text(
                 player.club,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall
             )
         }
 
         Text(
             "${player.value}",
+            color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Bold
         )
     }

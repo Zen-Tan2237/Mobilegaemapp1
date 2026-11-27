@@ -53,6 +53,8 @@ import com.nyp.scaffoldingapp.ui.pages.Page4
 import com.nyp.scaffoldingapp.ui.theme.GlassBackground
 import com.nyp.scaffoldingapp.ui.theme.ScaffoldingTheme
 import com.nyp.scaffoldingapp.ui.theme.glassSurface
+import androidx.compose.foundation.isSystemInDarkTheme
+
 
 /** Preserved four-tab navigation from the original MainActivity. */
 enum class Tab(val label: String, @DrawableRes val icon: Int) {
@@ -67,17 +69,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val context = LocalContext.current
-            val prefs = remember(context) { context.getSharedPreferences("football_appearance", Context.MODE_PRIVATE) }
-            // null means follow phone preference, while the first manual toggle saves an explicit choice.
-            var darkMode by remember { mutableStateOf(prefs.getBoolean("dark_mode", defaultDarkMode(context))) }
+            // Follow the phone's light or dark theme
+            val darkMode = isSystemInDarkTheme()
+
             ScaffoldingTheme(darkTheme = darkMode) {
-                AppScaffold(darkMode = darkMode, onToggleTheme = {
-                    darkMode = !darkMode
-                    prefs.edit().putBoolean("dark_mode", darkMode).apply()
-                })
+                AppScaffold(
+                    darkMode = darkMode,
+                    onToggleTheme = {}
+                )
             }
+
         }
+
     }
 }
 
