@@ -7,12 +7,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import com.nyp.scaffoldingapp.ui.theme.glassSurface
 import com.nyp.scaffoldingapp.utils.ExternalURLHelper
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -75,9 +74,11 @@ fun Page4(
         .padding(top = 10.dp)
     ) {
         Text("Match Highlights",
-            modifier = Modifier.padding(horizontal = 12.dp),
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineLarge,
+            fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
+            letterSpacing = (-0.8).sp,
+            modifier = Modifier.padding(horizontal = 12.dp),
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(Modifier.height(12.dp))
@@ -85,7 +86,9 @@ fun Page4(
             modifier = Modifier.padding(horizontal = 12.dp),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            letterSpacing = (-0.8).sp,
+            fontSize = 14.sp
         )
         Spacer(Modifier.height(12.dp))
         Row(
@@ -142,7 +145,13 @@ fun Page4(
                             horizontalAlignment = Alignment.CenterHorizontally
                         )
                         {
-                            Text(current.message)
+                            Text(current.message,
+                                modifier = Modifier.padding(12.dp),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 32.sp,
+                                letterSpacing = (-0.8).sp
+                            )
 
                             Button(onClick = {vm.load()}) {
                                 Text("Retry")
@@ -155,7 +164,11 @@ fun Page4(
                     if (shownResults.isEmpty()){
                         item{
                             Text("No Highlights found",
-                                modifier = Modifier.padding(12.dp)
+                                modifier = Modifier.padding(12.dp),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 32.sp,
+                                letterSpacing = (-0.8).sp
                             )
                         }
                     }
@@ -176,7 +189,6 @@ fun MatchHighlightsCard(match : MatchHighlights){
     val time = remember(match.dateMillis) { formatDate(match.dateMillis, "HH:mm") }
     Column(Modifier
         .fillMaxWidth()
-        .padding(horizontal = 16.dp)
         .glassSurface(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     )
@@ -193,48 +205,73 @@ fun MatchHighlightsCard(match : MatchHighlights){
                 Text(match.league,
                     modifier = Modifier.padding(horizontal = 2.dp),
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    letterSpacing = (-0.8).sp,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
                 Text (day,
                     modifier = Modifier.padding(horizontal = 5.dp),
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    letterSpacing = (-0.8).sp,
+                    fontSize = 12.sp
+                )
                 Text(time,
                     modifier = Modifier.padding(horizontal = 5.dp),
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    letterSpacing = (-0.8).sp,
+                    fontSize = 12.sp
+                )
             }
             Spacer(Modifier.height(12.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)
             {
                 Text(
                     text = shortTeamName(match.homeTeam),
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).padding(vertical = 3.dp),
                     textAlign = TextAlign.End,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    letterSpacing = (-0.8).sp,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
 
                 )
+                Spacer(Modifier.width(12.dp))
                 Text(
                     text = "${match.homeScore} - ${match.awayScore}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
-                    softWrap = false
+                    softWrap = false,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    letterSpacing = (-0.8).sp,
+                    fontSize = 28.sp
                 )
+                Spacer(Modifier.width(12.dp))
                 Text(
                     text = shortTeamName(match.awayTeam),
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).padding(vertical = 3.dp),
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    letterSpacing = (-0.8).sp,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
                 )
             }
             Text(match.description,
                 modifier = Modifier.padding(horizontal = 10.dp),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                letterSpacing = (-0.8).sp,
+                fontSize = 14.sp
+            )
 
             WatchHighlightsButton(match.highlightURL)
         }
@@ -262,7 +299,11 @@ fun WatchHighlightsButton(highlightUrl: String) {
         enabled = highlightUrl.isNotBlank()
     )
     {
-        Text("Watch Highlights")
+        Text("Watch Highlights",
+            letterSpacing = (-0.8).sp,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold
+        )
     }
 }
 

@@ -8,12 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Card
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,8 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.nyp.scaffoldingapp.data.model.FootballMatch
-import com.nyp.scaffoldingapp.data.repository.DemoMatchRepository
 import com.nyp.scaffoldingapp.ui.theme.glassSurface
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -41,6 +37,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment
 import com.nyp.scaffoldingapp.utils.shortTeamName
 import com.nyp.scaffoldingapp.ui.components.FilterDropdown
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.material3.HorizontalDivider
 
 @Composable
 fun  Page3(modifier: Modifier = Modifier, vm: ScheduleViewModel = viewModel()) {
@@ -83,7 +81,8 @@ fun  Page3(modifier: Modifier = Modifier, vm: ScheduleViewModel = viewModel()) {
             modifier = Modifier.padding(horizontal = pageHorizontalPadding),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            letterSpacing = (-0.8).sp,
         )
         Spacer(Modifier.height(12.dp))
         Text(
@@ -91,7 +90,8 @@ fun  Page3(modifier: Modifier = Modifier, vm: ScheduleViewModel = viewModel()) {
             modifier = Modifier.padding(horizontal = pageHorizontalPadding),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            letterSpacing = (-0.8).sp,
         )
         Spacer(Modifier.height(12.dp))
         Row(
@@ -178,95 +178,102 @@ fun  Page3(modifier: Modifier = Modifier, vm: ScheduleViewModel = viewModel()) {
 }
 
 @Composable
-private fun MatchFixtureCard(match: FootballMatch) {
-    val day = remember(match.kickOffMillis) { formatDate(match.kickOffMillis, "EEE, d MMM yyyy") }
-    val time = remember(match.kickOffMillis) { formatDate(match.kickOffMillis, "HH:mm") }
-    Spacer(Modifier.height(6.dp))
-    Column(Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 12.dp)
-        .glassSurface(),
-        verticalArrangement = Arrangement.spacedBy(8.dp))
-    {
-        Column(Modifier.fillMaxWidth())
-        {
-            Spacer(Modifier.height(12.dp))
-            // This is when the
-            Row {
-                Text(
-                    "Date:",
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    day,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-            Spacer(Modifier.height(5.dp))
-            // and this is when the time is the
-            Row {
-                Text(
-                    "Time:",
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    time,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-            Spacer(Modifier.height(5.dp))
-            // and when the time is the
-            Row {
-                Text(
-                    "Venue:",
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    match.venue,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
+fun MatchFixtureCard(match: FootballMatch) {
+
+    val date = SimpleDateFormat(
+        "EEE, dd MMM yyyy",
+        Locale.getDefault()
+    ).format(Date(match.kickOffMillis))
+
+    val time = SimpleDateFormat(
+        "HH:mm",
+        Locale.getDefault()
+    ).format(Date(match.kickOffMillis))
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .glassSurface(cornerRadius = 24)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        // League and date
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = match.league,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
+                letterSpacing = (-0.8).sp
+            )
+
+            Text(
+                text = date,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                letterSpacing = (-0.8).sp
+            )
         }
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(Modifier.height(5.dp))
-            // Man Utd is shit
-            Text(shortTeamName(match.homeTeam),
-                modifier = Modifier.padding(horizontal = 16.dp),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+
+        // Teams and kick-off time
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = shortTeamName(match.homeTeam),
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = (-0.8).sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(Modifier.height(5.dp))
-            Text("VS",
-                modifier = Modifier.padding(horizontal = 16.dp),
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colorScheme.onBackground
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = time,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = (-0.8).sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Text(
+                    text = "Kick-off",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Text(
+                text = shortTeamName(match.awayTeam),
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = (-0.8).sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(Modifier.height(5.dp))
-            Text(shortTeamName(match.awayTeam),
-                modifier = Modifier.padding(horizontal = 16.dp),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(Modifier.height(12.dp))
         }
+
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+        )
+
+        // Venue
+        Text(
+            text = match.venue,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodySmall,
+            letterSpacing = (-0.8).sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
