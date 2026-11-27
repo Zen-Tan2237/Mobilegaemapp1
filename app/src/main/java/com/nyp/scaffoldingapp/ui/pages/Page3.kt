@@ -40,14 +40,11 @@ import androidx.compose.material3.Button
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment
 import com.nyp.scaffoldingapp.utils.shortTeamName
+import com.nyp.scaffoldingapp.ui.components.FilterDropdown
 
-/** Page 3: upcoming football fixtures. Data is deliberately labelled DEMO. */
 @Composable
 fun  Page3(modifier: Modifier = Modifier, vm: ScheduleViewModel = viewModel()) {
-    // Use the match repository
-    val repository = remember { DemoMatchRepository() }
-    // Get the matches using the repository
-
+    val pageHorizontalPadding = 12.dp
     val state by vm.state.collectAsState()
 
     DisposableEffect(vm) {
@@ -83,70 +80,48 @@ fun  Page3(modifier: Modifier = Modifier, vm: ScheduleViewModel = viewModel()) {
     ) {
         Text(
             "Scheduled Matches",
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = pageHorizontalPadding),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(Modifier.height(15.dp))
+        Spacer(Modifier.height(12.dp))
         Text(
             "Upcoming Fixtures",
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = pageHorizontalPadding),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Normal,
             color = MaterialTheme.colorScheme.onBackground
         )
+        Spacer(Modifier.height(12.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = pageHorizontalPadding),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            FilterDropdown(
+                label = "League",
+                options = leagues,
+                selected = selectedLeague,
+                onSelected = { selectedLeague = it },
+                modifier = Modifier.weight(1f)
+            )
 
-        Spacer(Modifier.height(12.dp))
-        Text(
-            "League",
-            modifier = Modifier.padding(horizontal = 16.dp),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Row( Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        )
-        {
-            leagues.forEach { league ->
-                FilterChip(
-                    selected = selectedLeague == league,
-                    onClick = {selectedLeague = league},
-                    label = {Text(league)}
-                )
-            }
+            FilterDropdown(
+                label = "When",
+                options = dates,
+                selected = selectedDate,
+                onSelected = { selectedDate = it },
+                modifier = Modifier.weight(1f)
+            )
         }
         Spacer(Modifier.height(12.dp))
-        Text(
-            "When",
-            modifier = Modifier.padding(horizontal = 16.dp),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Row(Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        )
-        {
-            dates.forEach { date ->
-                FilterChip(
-                    selected = selectedDate == date,
-                    onClick = {selectedDate = date},
-                    label = {Text(date)}
-                )
-            }
-        }
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                start = 16.dp, end = 16.dp, bottom = 16.dp
+                start = 12.dp, end = 12.dp, bottom = 16.dp
             ),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
@@ -207,20 +182,26 @@ private fun MatchFixtureCard(match: FootballMatch) {
     val day = remember(match.kickOffMillis) { formatDate(match.kickOffMillis, "EEE, d MMM yyyy") }
     val time = remember(match.kickOffMillis) { formatDate(match.kickOffMillis, "HH:mm") }
     Spacer(Modifier.height(6.dp))
-    Card(Modifier.fillMaxWidth())
+    Column(Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 12.dp)
+        .glassSurface(),
+        verticalArrangement = Arrangement.spacedBy(8.dp))
     {
-        Column(Modifier.fillMaxWidth() .glassSurface())
+        Column(Modifier.fillMaxWidth())
         {
             Spacer(Modifier.height(12.dp))
             // This is when the
-            Row{
-                Text("Date:",
+            Row {
+                Text(
+                    "Date:",
                     modifier = Modifier.padding(horizontal = 16.dp),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                Text(day,
+                Text(
+                    day,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onBackground
@@ -228,14 +209,16 @@ private fun MatchFixtureCard(match: FootballMatch) {
             }
             Spacer(Modifier.height(5.dp))
             // and this is when the time is the
-            Row{
-                Text("Time:",
+            Row {
+                Text(
+                    "Time:",
                     modifier = Modifier.padding(horizontal = 16.dp),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                Text(time,
+                Text(
+                    time,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onBackground
@@ -243,19 +226,23 @@ private fun MatchFixtureCard(match: FootballMatch) {
             }
             Spacer(Modifier.height(5.dp))
             // and when the time is the
-            Row{
-                Text("Venue:",
+            Row {
+                Text(
+                    "Venue:",
                     modifier = Modifier.padding(horizontal = 16.dp),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                Text(match.venue,
+                Text(
+                    match.venue,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
+        }
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(Modifier.height(5.dp))
             // Man Utd is shit
             Text(shortTeamName(match.homeTeam),

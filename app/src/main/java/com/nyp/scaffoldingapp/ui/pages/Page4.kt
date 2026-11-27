@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.text.style.TextAlign
 import com.nyp.scaffoldingapp.utils.shortTeamName
 import com.nyp.scaffoldingapp.utils.rollChance
+import com.nyp.scaffoldingapp.ui.components.FilterDropdown
 
 
 @Composable
@@ -87,55 +88,33 @@ fun Page4(
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(Modifier.height(12.dp))
-        Text(
-            "League",
-            modifier = Modifier.padding(horizontal = 16.dp),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Row( Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
-        )
-        {
-            leagues.forEach { league ->
-                FilterChip(
-                    selected = selectedLeague == league,
-                    onClick = {selectedLeague = league},
-                    label = {Text(league)}
-                )
-            }
+        ) {
+            FilterDropdown(
+                label = "League",
+                options = leagues,
+                selected = selectedLeague,
+                onSelected = { selectedLeague = it },
+                modifier = Modifier.weight(1f)
+            )
+
+            FilterDropdown(
+                label = "When",
+                options = dates,
+                selected = selectedDate,
+                onSelected = { selectedDate = it },
+                modifier = Modifier.weight(1f)
+            )
         }
         Spacer(Modifier.height(12.dp))
-        Text(
-            "When",
-            modifier = Modifier.padding(horizontal = 16.dp),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Row(Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        )
-        {
-            dates.forEach { date ->
-                FilterChip(
-                    selected = selectedDate == date,
-                    onClick = {selectedDate = date},
-                    label = {Text(date)}
-                )
-            }
-        }
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                start = 16.dp, end = 16.dp, bottom = 16.dp
+                start = 12.dp, end = 12.dp, bottom = 16.dp
             ),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
@@ -176,7 +155,7 @@ fun Page4(
                     if (shownResults.isEmpty()){
                         item{
                             Text("No Highlights found",
-                                modifier = Modifier.padding(16.dp)
+                                modifier = Modifier.padding(12.dp)
                             )
                         }
                     }

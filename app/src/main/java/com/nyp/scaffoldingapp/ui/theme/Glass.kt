@@ -13,27 +13,56 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
 
-/** Shared glass look: transparent layered fill and soft edges (not a backdrop blur). */
+/** Shared glass look: transparent layered fill and soft edges. */
 @Composable
 fun Modifier.glassSurface(cornerRadius: Int = 24): Modifier {
-    val dark = MaterialTheme.colorScheme.background.red < 0.2f
+    val colours = MaterialTheme.colorScheme
+    val dark = colours.background.luminance() < 0.5f
+
     val shape = RoundedCornerShape(cornerRadius.dp)
-    val top = if (dark) Color.White.copy(alpha = 0.19f) else Color.White.copy(alpha = 0.84f)
-    val bottom = if (dark) Color(0xFF9CCBFF).copy(alpha = 0.07f)
-                 else Color(0xFFBBD5F3).copy(alpha = 0.36f)
+
+    val top = Color.White.copy(
+        alpha = if (dark) 0.12f else 0.65f
+    )
+
+    val bottom = colours.primary.copy(
+        alpha = if (dark) 0.04f else 0.08f
+    )
+
+    val borderColour = Color.White.copy(
+        alpha = if (dark) 0.16f else 0.85f
+    )
+
     return this
         .clip(shape)
-        .background(Brush.linearGradient(listOf(top, bottom)))
-        .border(BorderStroke(1.dp, if (dark) Color.White.copy(alpha = 0.22f)
-                            else Color.White.copy(alpha = 0.95f)), shape)
+        .background(
+            Brush.linearGradient(listOf(top, bottom))
+        )
+        .border(
+            BorderStroke(1.dp, borderColour),
+            shape
+        )
 }
 
 @Composable
-fun GlassBackground(content: @Composable BoxScope.() -> Unit) {
-    val dark = MaterialTheme.colorScheme.background.red < 0.2f
-    val palette = if (dark) listOf(Color(0xFF06101C), Color(0xFF163556), Color(0xFF302B58))
-                  else listOf(Color(0xFFDDEFFF), Color(0xFFF2F7FF), Color(0xFFDADCF9))
-    Box(Modifier.fillMaxSize().background(Brush.linearGradient(palette)), content = content)
+fun GlassBackground(
+    content: @Composable BoxScope.() -> Unit
+) {
+    val colours = MaterialTheme.colorScheme
+
+    val palette = listOf(
+        colours.background,
+        colours.surface,
+        colours.surfaceVariant
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Brush.linearGradient(palette)),
+        content = content
+    )
 }
