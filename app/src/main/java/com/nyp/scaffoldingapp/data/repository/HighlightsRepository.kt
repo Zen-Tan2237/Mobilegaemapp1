@@ -75,7 +75,7 @@ class ApiHighlightsRepository : HighlightsRepository {
 					homeScore = obj.getInt("homeScore"),
 					awayScore = obj.getInt("awayScore"),
 					dateMillis = dateMillis,
-					description = obj.getString("description"),
+					description = obj.optString("description", "No description available"),
 					highlightURL = obj.getString("highlightURL")
 				)
 			)

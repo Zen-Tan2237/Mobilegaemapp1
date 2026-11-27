@@ -149,7 +149,7 @@ fun Page4(
                                 modifier = Modifier.padding(12.dp),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 32.sp,
+                                fontSize = 24.sp,
                                 letterSpacing = (-0.8).sp
                             )
 
@@ -227,7 +227,7 @@ fun MatchHighlightsCard(match : MatchHighlights){
                     fontSize = 12.sp
                 )
             }
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(5.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)
             {
                 Text(
@@ -272,7 +272,10 @@ fun MatchHighlightsCard(match : MatchHighlights){
                 letterSpacing = (-0.8).sp,
                 fontSize = 14.sp
             )
-
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 5.dp)
+            )
             WatchHighlightsButton(match.highlightURL)
         }
     }
@@ -284,8 +287,9 @@ fun WatchHighlightsButton(highlightUrl: String) {
 
     Button(
         onClick = {
-            // I think I very funny so I can rick roll u
-            val url = if (rollChance(5)){
+            // Rickroll easter egg
+            // NOT FUNCTIONALLY WRONG!!! ITS JUST AN EASTER EGG
+            val url = if (rollChance(2)){
                 "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
             }
             else{

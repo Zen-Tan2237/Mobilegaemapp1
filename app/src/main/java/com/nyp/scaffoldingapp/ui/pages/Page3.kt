@@ -149,7 +149,13 @@ fun  Page3(modifier: Modifier = Modifier, vm: ScheduleViewModel = viewModel()) {
                             horizontalAlignment = Alignment.CenterHorizontally
                         )
                         {
-                            Text(current.message)
+                            Text(current.message,
+                                modifier = Modifier.padding(12.dp),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 24.sp,
+                                letterSpacing = (-0.8).sp
+                            )
 
                             Button(onClick = {vm.load()}){
                                 Text("Retry")
@@ -261,9 +267,7 @@ fun MatchFixtureCard(match: FootballMatch) {
             )
         }
 
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-        )
+        HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
 
         // Venue
         Text(

@@ -3,6 +3,7 @@ package com.nyp.scaffoldingapp
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.Crossfade
@@ -34,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +60,7 @@ enum class Tab(val label: String, @DrawableRes val icon: Int) {
     PAGE2("Page 2", R.drawable.ic_email),
     PAGE3("Page 3", R.drawable.ic_list),
     PAGE4("Page 4", R.drawable.ic_star)
+
 }
 
 class MainActivity : ComponentActivity() {
@@ -82,9 +85,15 @@ private fun defaultDarkMode(context: Context): Boolean =
     (context.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
             android.content.res.Configuration.UI_MODE_NIGHT_YES
 
+
+
 @Composable
 fun AppScaffold(darkMode: Boolean, onToggleTheme: () -> Unit) {
     var selectedTab by rememberSaveable { mutableStateOf(Tab.PAGE1) }
+    val stateHolder = rememberSaveableStateHolder()
+    BackHandler(enabled = selectedTab != Tab.PAGE1) {
+        selectedTab = Tab.PAGE1
+    }
     GlassBackground {
         Scaffold(
             containerColor = Color.Transparent,
@@ -116,12 +125,19 @@ fun AppScaffold(darkMode: Boolean, onToggleTheme: () -> Unit) {
             }
         ) { padding ->
             Box(Modifier.fillMaxSize().padding(padding)) {
-                Crossfade(targetState = selectedTab, animationSpec = tween(230), label = "pageTransition") { tab ->
-                    when (tab) {
-                        Tab.PAGE1 -> Page1()
-                        Tab.PAGE2 -> Page2()
-                        Tab.PAGE3 -> Page3()
-                        Tab.PAGE4 -> Page4()
+                Crossfade(
+                    targetState = selectedTab,
+                    animationSpec = tween(230),
+                    label = "pageTransition"
+                )
+                { tab ->
+                    stateHolder.SaveableStateProvider(tab.name) {
+                        when (tab) {
+                            Tab.PAGE1 -> Page1()
+                            Tab.PAGE2 -> Page2()
+                            Tab.PAGE3 -> Page3()
+                            Tab.PAGE4 -> Page4()
+                        }
                     }
                 }
             }
